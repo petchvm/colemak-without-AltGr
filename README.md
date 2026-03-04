@@ -1,50 +1,54 @@
 # Colemak Without AltGr
 
-Vanilla Colemak keyboard layout (Capslock as Backspace) for Windows without AltGr functionality.
+Windows-focused Colemak layout package without AltGr mappings, plus optional portable and utility variants.
 
-## Features
+## Repository layout
 
-- Standard Colemak layout
-- No AltGr keys (So pressing Ctrl + Alt doesn't ruin your keyboard shortcuts)
-- Simple installer for Windows (x86, x64, ia64)
+- `Cmk_NoAltGrANSI.klc`
+   - Source layout file for Microsoft Keyboard Layout Creator (MSKLC).
+- `colemak-without-altgr/`
+   - Installable package output:
+      - `setup.exe`
+      - `NoAltGr_amd64.msi`
+      - `NoAltGr_i386.msi`
+      - `NoAltGr_ia64.msi`
+      - `amd64/NoAltGr.dll`
+      - `i386/NoAltGr.dll`
+      - `ia64/NoAltGr.dll`
+      - `wow64/NoAltGr.dll`
+- `colemak-portable/`
+   - Portable PKL-based layout package (`pkl.exe`, `pkl.ini`, language/layout assets).
+- `colemak-capslock-fix/`
+   - Optional CapsLock behavior helper (`colemak-capslock-fix.ahk`, `.exe`, icon).
 
----
+## Install (Windows)
 
-## Quick Start
+1. Open `colemak-without-altgr/`.
+2. Run `setup.exe`.
+3. Wait for installation to finish, then restart Windows.
+4. Open **Language preferences**, add/select the new Colemak layout, and switch with `Win + Space`.
 
-1. **Run the Setup**
+## Portable option (no system install)
 
-   - Go to the `setup/` folder.
-   - Double-click `setup.exe`.
-   - If the window closes without a success message, please wait—it may take longer than expected.
-   - **Restart your computer** after installation.
+If you prefer a portable setup:
 
-2. **Switch to the Layout**
-   - Open Windows `Language preferences`.
-   - Add/select the new Colemak layout.
-   - Use `Win + Space` to switch between layouts.
+1. Open `colemak-portable/`.
+2. Run `pkl.exe`.
+3. Keep it running while using the layout.
 
----
-
-## Building from Source
+## Build from source
 
 1. Install [Microsoft Keyboard Layout Creator (MSKLC)](https://www.microsoft.com/en-us/download/details.aspx?id=102134) and [.NET Framework v3.5](https://www.microsoft.com/en-ph/download/details.aspx?id=21).
-2. Open the `.klc` file in MSKLC.
-3. Use `Build DLL and Setup Package` in MSKLC.
-4. For more help, see [Henri's MSKLC Guide](https://msklc-guide.github.io/).
+2. Open `Cmk_NoAltGrANSI.klc` in MSKLC.
+3. Use **Build DLL and Setup Package**.
+4. (Optional) Compare output against files in `colemak-without-altgr/`.
+5. For extra MSKLC help, see [Henri's MSKLC Guide](https://msklc-guide.github.io/).
 
----
+## Troubleshooting
 
-## Troubleshooting & Uninstall
-
-- If installation fails, ensure you have restarted your computer.
-- To uninstall:
-  1. Remove the layout from `Language preferences`.
-  2. Go to `Settings > Apps & Features`, find the layout, and uninstall.
-  3. Restart your computer.
-- If you have issues with `.klc` files, ensure they use CRLF line endings and UTF-16LE-BOM encoding.
-
----
+- If installation appears to fail, restart Windows and try again.
+- If `.klc` opening/building fails, ensure CRLF line endings and UTF-16LE BOM encoding.
+- To uninstall, remove the layout from Language preferences, uninstall it from Apps settings, then restart.
 
 ## Credits
 
@@ -52,4 +56,5 @@ Vanilla Colemak keyboard layout (Capslock as Backspace) for Windows without AltG
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Project license: MIT (`LICENSE`).
+Portable package includes its own license files under `colemak-portable/`.

@@ -1,0 +1,52 @@
+(defcfg
+  process-unmapped-keys yes
+)
+
+;; Only list the keys we're actually changing.
+;; All other keys pass through unchanged via process-unmapped-keys.
+(defsrc
+  caps
+  a    s    d    f
+  y    u    i    o    p
+  h    j    k    l    scln
+)
+
+(defalias
+  ;; tap-hold-release 200 200 means:
+  ;; first 200 = tap timeout (release within this = backspace)
+  ;; second 200 = hold timeout (held beyond this = nav layer)
+  ;; Unlike the QMK tapping term, you can tune these two numbers
+  ;; independently here. Try 150 150 if 200 feels sluggish.
+  ext (tap-hold-release 200 200 bspc (layer-while-held nav))
+)
+
+(deflayer base
+  @ext
+  a    s    d    f
+  y    u    i    o    p
+  h    j    k    l    scln
+)
+
+;; deflayermap only needs the keys that change.
+;; Everything else falls through to base via process-unmapped-keys.
+(deflayermap (nav)
+  ;; Home row modifiers (left hand)
+  a    lalt
+  s    esc
+  d    lsft
+  f    lctl
+
+  ;; Page navigation (top row, right hand)
+  y    pgup
+  u    home
+  o    end
+  p    del
+
+  ;; Arrow cluster (home row, right hand)
+  h    pgdn
+  i    up
+  j    lft
+  k    down
+  l    rght
+  scln bspc
+)

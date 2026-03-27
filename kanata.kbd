@@ -1,52 +1,128 @@
+;; ============================================================
+;; kanata.kbd — Navigation layer for laptop use
+;;
+;; Mirrors the Extend-inspired nav layer from the Keychron Q3 HE.
+;; CapsLock is the layer key: tap it for Backspace, hold it to
+;; activate the navigation layer.
+;;
+;; Physical key names always refer to QWERTY positions regardless
+;; of what layout Windows thinks you are using. So even on Colemak,
+;; the key your left index finger rests on at home row is called
+;; "f" here, because that is its physical QWERTY position.
+;; ============================================================
+
+
 (defcfg
+  ;; Pass any key not listed in defsrc through to Windows unchanged.
+  ;; Without this, every key not explicitly listed would stop working.
   process-unmapped-keys yes
+
+  ;; Makes consecutive tap-hold keys behave predictably when
+  ;; pressed in rapid sequence, which matters for fast typing.
+  concurrent-tap-hold yes
 )
 
-;; Only list the keys we're actually changing.
-;; All other keys pass through unchanged via process-unmapped-keys.
+
+;; Centralise timing here so you only need to change one place
+;; when tuning. 200ms is a safe default to start with.
+;; If tapping CapsLock for Backspace feels sluggish, try 150.
+;; If nav layer triggers accidentally during fast typing, try 250.
+(defvar
+  tap-time  200
+  hold-time 200
+)
+
+
+;; defsrc tells Kanata which physical keys to intercept.
+;; Every key you want to remap on any layer must appear here first.
+;; Keys not listed are passed through untouched (via process-unmapped-keys).
 (defsrc
   caps
   a    s    d    f
   y    u    i    o    p
   h    j    k    l    scln
+  z    x    c    v
 )
 
+
+;; Aliases give readable names to complex actions so the layer
+;; definitions below stay clean and easy to read.
 (defalias
-  ;; tap-hold-release 200 200 means:
-  ;; first 200 = tap timeout (release within this = backspace)
-  ;; second 200 = hold timeout (held beyond this = nav layer)
-  ;; Unlike the QMK tapping term, you can tune these two numbers
-  ;; independently here. Try 150 150 if 200 feels sluggish.
-  ext (tap-hold-release 200 200 bspc (layer-while-held nav))
+  ;; tap-hold-press is the right variant for a layer-switch key.
+  ;; It resolves to "hold" the moment you press any other key while
+  ;; CapsLock is down, giving zero-latency arrow key activation.
+  ;;
+  ;; Compare to tap-hold-release, which buffers every key press
+  ;; until CapsLock is released — causing subtle but noticeable
+  ;; lag on every arrow key press during navigation.
+  ext (tap-hold-press $tap-time $hold-time bspc (layer-while-held nav))
 )
 
+
+;; The base layer. Only CapsLock changes — everything else passes
+;; through transparent to whatever Windows layout you are using.
 (deflayer base
-  @ext
+  @ext                        ;; CapsLock: tap=Backspace, hold=nav layer
   a    s    d    f
   y    u    i    o    p
   h    j    k    l    scln
+  z    x    c    v
 )
 
-;; deflayermap only needs the keys that change.
-;; Everything else falls through to base via process-unmapped-keys.
+
+;; The navigation layer. deflayermap only requires you to list the
+;; keys that actually change — everything else falls through to base.
+;;
+;; The layout mirrors DreymaR's Extend design philosophy:
+;;   - Left hand provides modifiers and escape, keeping the right
+;;     hand free to navigate without any modifier conflicts.
+;;   - Right hand home row holds the arrow cluster exactly where
+;;     your fingers already rest, with no hand movement required.
+;;   - Page/line navigation fills in naturally around the arrows.
 (deflayermap (nav)
-  ;; Home row modifiers (left hand)
+
+  ;; ── Left hand: modifiers and escape ──────────────────────────
+  ;; These sit on your left home row so you can chord them with
+  ;; any right-hand navigation key. Extend+d+j = Shift+Left
+  ;; (select one character). Extend+f+j = Ctrl+Left (jump one word).
+  ;; Extend+d+f+j = Ctrl+Shift+Left (select one whole word).
   a    lalt
   s    esc
   d    lsft
   f    lctl
 
-  ;; Page navigation (top row, right hand)
+  ;; ── Right hand top row: page and line navigation ─────────────
+  ;; Y and H flank the arrow cluster above and below for Page Up/Down.
+  ;; U and O sit left and right of the Up key for Home and End.
+  ;; This forms a spatial diamond that mirrors the physical layout
+  ;; of a full-size keyboard's navigation cluster.
   y    pgup
   u    home
+  i    up       ;; sits directly above the Down key on K — intentional
   o    end
   p    del
 
-  ;; Arrow cluster (home row, right hand)
+  ;; ── Right hand home row: arrow cluster and backspace ─────────
+  ;; J/K/L form the Left/Down/Right of the inverted-T arrow cluster.
+  ;; I (above K) completes the Up direction.
+  ;; H for Page Down mirrors Y for Page Up, one row apart.
+  ;; Semicolon (the key right of L) gives Backspace so you can
+  ;; delete without ever leaving the navigation position.
   h    pgdn
-  i    up
   j    lft
   k    down
   l    rght
   scln bspc
+
+  ;; ── Bottom row: editing shortcuts ────────────────────────────
+  ;; Standard Ctrl+ZXCV. These work in every Windows application.
+  ;; Note: if you are inside a terminal emulator and Ctrl+C or
+  ;; Ctrl+X do not copy/cut as expected, that is the terminal
+  ;; intercepting those keys as Unix signals (SIGINT, SIGTSTP).
+  ;; Configure your terminal to use Ctrl+Shift+C/X for clipboard
+  ;; in that case — that is a terminal setting, not a Kanata one.
+  z    C-z
+  x    C-x
+  c    C-c
+  v    C-v
 )

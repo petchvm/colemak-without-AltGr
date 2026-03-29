@@ -1,7 +1,6 @@
 ;; ============================================================
 ;; kanata.kbd — Navigation layer for laptop use
 ;;
-;; Mirrors the Extend-inspired nav layer from the Keychron Q3 HE.
 ;; CapsLock is the layer key: tap it for Backspace, hold it to
 ;; activate the navigation layer.
 ;;
@@ -38,24 +37,35 @@
 ;; Keys not listed are passed through untouched (via process-unmapped-keys).
 (defsrc
   caps
+  e    r
   a    s    d    f
   y    u    i    o    p
   h    j    k    l    scln
-  z    x    c    v
+  z    x    c    v    b
+  m
 )
 
 
 ;; Aliases give readable names to complex actions so the layer
 ;; definitions below stay clean and easy to read.
 (defalias
-  ;; tap-hold-press is the right variant for a layer-switch key.
-  ;; It resolves to "hold" the moment you press any other key while
-  ;; CapsLock is down, giving zero-latency arrow key activation.
+  ;; fork checks whether Ctrl is held at the moment CapsLock is pressed.
+  ;; This check is instantaneous — no timing window involved.
   ;;
-  ;; Compare to tap-hold-release, which buffers every key press
-  ;; until CapsLock is released — causing subtle but noticeable
-  ;; lag on every arrow key press during navigation.
-  ext (tap-hold-press $tap-time $hold-time bspc (layer-while-held nav))
+  ;; If Ctrl IS held:    immediately send Ctrl+Backspace (delete whole word).
+  ;; If Ctrl is NOT held: fall through to the normal tap-hold-press behaviour,
+  ;;                      where a tap gives Backspace and a hold activates nav.
+  ;;
+  ;; (lctl rctl) means "either left or right Ctrl" — both are covered.
+  ;;
+  ;; The reason this works without delay is that there is no ambiguity
+  ;; when Ctrl is down: you cannot be intending a bare Backspace tap or
+  ;; a nav layer hold — Ctrl+Backspace is the only sensible interpretation.
+  ;; Kanata's fork exploits that certainty to resolve immediately.
+  ext (fork
+        (tap-hold-press $tap-time $hold-time bspc (layer-while-held nav))
+        C-bspc
+        (lctl rctl))
 )
 
 
@@ -63,10 +73,12 @@
 ;; through transparent to whatever Windows layout you are using.
 (deflayer base
   @ext                        ;; CapsLock: tap=Backspace, hold=nav layer
+  e    r
   a    s    d    f
   y    u    i    o    p
   h    j    k    l    scln
-  z    x    c    v
+  z    x    c    v    b
+  m
 )
 
 
@@ -80,6 +92,15 @@
 ;;     your fingers already rest, with no hand movement required.
 ;;   - Page/line navigation fills in naturally around the arrows.
 (deflayermap (nav)
+
+  ;; ── Left hand top row: tab navigation ───────────────────────
+  ;; E (QWERTY) = Colemak F: Ctrl+Shift+Tab — previous tab
+  ;; R (QWERTY) = Colemak P: Ctrl+Tab       — next tab
+  ;; These sit naturally under your left ring and middle fingers
+  ;; on the top row, mirroring how DreymaR puts browser back/forward
+  ;; in the same positions. Tab-switching is a close cousin of that.
+  e    C-S-tab
+  r    C-tab
 
   ;; ── Left hand: modifiers and escape ──────────────────────────
   ;; These sit on your left home row so you can chord them with
@@ -125,4 +146,15 @@
   x    C-x
   c    C-c
   v    C-v
+
+  ;; B = Ctrl+Shift+V. In terminals this is the terminal-compatible
+  ;; paste (mirroring Ctrl+Shift+C for copy). In VS Code it opens
+  ;; Markdown preview. Useful to have on the bottom row near ZXCV.
+  b    C-S-v
+
+  ;; M = context menu key (the ☰ key). Equivalent to right-clicking
+  ;; at the cursor position in any application. Works in file managers,
+  ;; browsers, editors — anywhere a right-click menu makes sense.
+  ;; Kanata accepts "menu" as the keycode name for this key.
+  m    menu
 )

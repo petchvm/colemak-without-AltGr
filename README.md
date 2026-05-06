@@ -1,60 +1,33 @@
 # Colemak Without AltGr
 
-Windows-focused Colemak layout package without AltGr mappings, plus optional portable and utility variants.
+Windows-focused Colemak layout without AltGr mappings, with optional portable and utility variants.
 
-## Repository layout
+| Path | Description |
+|------|-------------|
+| `Cmk_NoAltGrANSI.klc` | MSKLC source layout file |
+| `colemak-without-altgr/` | Installable package (`setup.exe`, MSIs, DLLs) |
+| `colemak-portable/` | Portable PKL-based layout (`pkl.exe`, assets) |
+| `colemak-capslock-fix/` | Optional CapsLock behavior helper (AHK/EXE) |
 
-- `Cmk_NoAltGrANSI.klc`
-   - Source layout file for Microsoft Keyboard Layout Creator (MSKLC).
-- `colemak-without-altgr/`
-   - Installable package output:
-      - `setup.exe`
-      - `NoAltGr_amd64.msi`
-      - `NoAltGr_i386.msi`
-      - `NoAltGr_ia64.msi`
-      - `amd64/NoAltGr.dll`
-      - `i386/NoAltGr.dll`
-      - `ia64/NoAltGr.dll`
-      - `wow64/NoAltGr.dll`
-- `colemak-portable/`
-   - Portable PKL-based layout package (`pkl.exe`, `pkl.ini`, language/layout assets).
-- `colemak-capslock-fix/`
-   - Optional CapsLock behavior helper (`colemak-capslock-fix.ahk`, `.exe`, icon).
+## Install
 
-## Install (Windows)
+1. Run `colemak-without-altgr/setup.exe` and restart Windows.
+2. Open **Language preferences**, add the Colemak layout, and switch with `Win + Space`.
 
-1. Open `colemak-without-altgr/`.
-2. Run `setup.exe`.
-3. Wait for installation to finish, then restart Windows.
-4. Open **Language preferences**, add/select the new Colemak layout, and switch with `Win + Space`.
+**Portable (no install):** Run `colemak-portable/pkl.exe` and keep it running.
 
-## Portable option (no system install)
+## Build from Source
 
-If you prefer a portable setup:
-
-1. Open `colemak-portable/`.
-2. Run `pkl.exe`.
-3. Keep it running while using the layout.
-
-## Build from source
-
-1. Install [Microsoft Keyboard Layout Creator (MSKLC)](https://www.microsoft.com/en-us/download/details.aspx?id=102134) and [.NET Framework v3.5](https://www.microsoft.com/en-ph/download/details.aspx?id=21).
-2. Open `Cmk_NoAltGrANSI.klc` in MSKLC.
-3. Use **Build DLL and Setup Package**.
-4. (Optional) Compare output against files in `colemak-without-altgr/`.
-5. For extra MSKLC help, see [Henri's MSKLC Guide](https://msklc-guide.github.io/).
+1. Install [MSKLC](https://www.microsoft.com/en-us/download/details.aspx?id=102134) and [.NET Framework 3.5](https://www.microsoft.com/en-ph/download/details.aspx?id=21).
+2. Open `Cmk_NoAltGrANSI.klc` in MSKLC and run **Build DLL and Setup Package**.
+3. See [Henri's MSKLC Guide](https://msklc-guide.github.io/) for help.
 
 ## Troubleshooting
 
-- If installation appears to fail, restart Windows and try again.
-- If `.klc` opening/building fails, ensure CRLF line endings and UTF-16LE BOM encoding.
-- To uninstall, remove the layout from Language preferences, uninstall it from Apps settings, then restart.
+- **Install fails:** Restart and retry.
+- **`.klc` won't open/build:** Verify CRLF line endings and UTF-16LE BOM encoding.
+- **Uninstall:** Remove from Language preferences, uninstall from Apps settings, restart.
 
-## Credits
+## Credits & License
 
-- Based on resources from [DreymaR](https://github.com/DreymaR).
-
-## License
-
-Project license: MIT (`LICENSE`).
-Portable package includes its own license files under `colemak-portable/`.
+Based on [DreymaR's](https://github.com/DreymaR) resources. MIT license. Portable package includes its own license under `colemak-portable/`.
